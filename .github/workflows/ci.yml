@@ -30,6 +30,12 @@ jobs:
         unityVersion:
           - 2022.3.2f1
     steps:
+      - name: Add SSH key
+        run: |
+          eval `ssh-agent -s`
+          ssh-add - <<< '${{ secrets.PRIVATE_SSH_KEY }}'
+          pip install -r requirements.txt
+
       - name: Checkout repository
         id: checkout-repo
         uses: actions/checkout@v3
