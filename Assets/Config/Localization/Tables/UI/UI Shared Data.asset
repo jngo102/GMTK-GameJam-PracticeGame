@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UI Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: UI
+  m_TableCollectionNameGuidString: 5f2ad33cc221b2246a2ce226959792bf
+  m_Entries:
+  - m_Id: 890718038855680
+    m_Key: START
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718089187328
+    m_Key: SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718089187329
+    m_Key: CREDITS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718089187330
+    m_Key: QUIT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381632
+    m_Key: QUIT_CONFIRM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381633
+    m_Key: YES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381634
+    m_Key: NO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381635
+    m_Key: BACK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381636
+    m_Key: LANGUAGE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381637
+    m_Key: BINDINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381638
+    m_Key: ART
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381639
+    m_Key: PROGRAMMING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381640
+    m_Key: MUSIC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 388969869324
+    m_Key: SFX
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381641
+    m_Key: RESUME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381642
+    m_Key: UP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381643
+    m_Key: DOWN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381644
+    m_Key: LEFT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381645
+    m_Key: RIGHT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 890718093381646
+    m_Key: JUMP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1432796338655232
+    m_Key: SCORE
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 7132550038702522517
+  references:
+    version: 2
+    RefIds:
+    - rid: 7132550038702522517
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1687474632591
