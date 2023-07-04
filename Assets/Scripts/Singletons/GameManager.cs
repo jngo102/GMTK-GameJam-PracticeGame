@@ -15,6 +15,9 @@ public class GameManager : Singleton<GameManager> {
     [SerializeField] private InnerPlayer innerPlayerPrefab;
 
     [SerializeField] private OuterPlayer outerPlayerPrefab;
+    
+    public InnerPlayer InnerPlayer => innerPlayer;
+    public OuterPlayer OuterPlayer => outerPlayer;
 
     private InnerPlayer innerPlayer;
     private OuterPlayer outerPlayer;
@@ -97,16 +100,15 @@ public class GameManager : Singleton<GameManager> {
 
     public void SwitchPlayer(SceneType playerType) {
         var cameraController = FindObjectOfType<CameraController>();
-        cameraController.ClearTargets();
         switch (playerType) {
             case SceneType.Inner:
                 innerPlayer.gameObject.SetActive(true);
-                cameraController.AddTarget(innerPlayer.transform);
+                cameraController.Target = innerPlayer.transform;
                 outerPlayer.gameObject.SetActive(false);
                 break;
             case SceneType.Outer:
                 outerPlayer.gameObject.SetActive(true);
-                cameraController.AddTarget(outerPlayer.transform);
+                cameraController.Target = outerPlayer.transform;
                 innerPlayer.gameObject.SetActive(false);
                 break;
         }

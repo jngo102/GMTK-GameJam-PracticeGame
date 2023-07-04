@@ -212,7 +212,7 @@ public class Player : MonoBehaviour, ISpawnable {
     ///     Assign the player as the camera controller's current target.
     /// </summary>
     private void AssignPlayer() {
-        FindObjectOfType<CameraController>(true).AddTarget(transform);
+        FindObjectOfType<CameraController>(true).Target = transform;
         DontDestroyOnLoad(this);
     }
 

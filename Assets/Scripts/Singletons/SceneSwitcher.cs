@@ -58,6 +58,8 @@ public class SceneSwitcher : Singleton<SceneSwitcher> {
         foreach (var gameObject in SceneManager.GetActiveScene().GetRootGameObjects()) {
             gameObject.SetActive(true);
         }
+        
+        UIManager.Instance.CloseUI<Vignette>();
     }
 
     public static void ActivateOuterScene() {
@@ -72,5 +74,7 @@ public class SceneSwitcher : Singleton<SceneSwitcher> {
         foreach (var gameObject in SceneManager.GetSceneByName(CurrentOuterScene).GetRootGameObjects()) {
             gameObject.SetActive(true);
         }
+
+        UIManager.Instance.OpenUI<Vignette>();
     }
 }

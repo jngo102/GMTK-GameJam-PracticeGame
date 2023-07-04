@@ -75,7 +75,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 100
+  m_ReferencePixelsPerUnit: 64
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 1
@@ -156,6 +156,7 @@ MonoBehaviour:
   - {fileID: 147620973503254199, guid: c6bf24fc2b627e04b8d8ff32aebff8f8, type: 3}
   - {fileID: 7702182860323956965, guid: 5726fa8e0d893804f91f43ac54eaa556, type: 3}
   - {fileID: 89546551266865876, guid: 2b75609d2b9b10d4f8835c5a2a044491, type: 3}
+  - {fileID: 8323574556213933700, guid: 51d19fce7796d054486efb114337e2c2, type: 3}
 --- !u!1 &2446432805314404923
 GameObject:
   m_ObjectHideFlags: 0
