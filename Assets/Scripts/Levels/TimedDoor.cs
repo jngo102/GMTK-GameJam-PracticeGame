@@ -1,17 +1,13 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
 public class TimedDoor : MonoBehaviour {
     [SerializeField] private float doorOpenTime = 2;
-        
-    private Animator animator;
-
+    [SerializeField] private float openDoorHeight = 3;
+    [SerializeField] private float openCloseTime = 0.25f;
+    [SerializeField] private GameObject door;
+    
     private float doorTimer;
     private bool isOpen;
-    
-    private void Awake() {
-        animator = GetComponent<Animator>();
-    }
 
     private void Start() {
         doorTimer = doorOpenTime + 1;
@@ -21,7 +17,7 @@ public class TimedDoor : MonoBehaviour {
         if (!isOpen) return;
         doorTimer += Time.deltaTime;
         if (doorTimer >= doorOpenTime && isOpen) {
-            animator.Play("Close");
+            iTween.MoveBy(door, Vector3.down * openDoorHeight, openCloseTime);
             isOpen = false;
         }
     }
@@ -29,7 +25,7 @@ public class TimedDoor : MonoBehaviour {
     private void OnTriggerExit2D(Collider2D other) {
         if (other.CompareTag("Player") && !isOpen) {
             doorTimer = 0;
-            animator.Play("Open");
+            iTween.MoveBy(door, Vector3.up * openDoorHeight, openCloseTime);
             isOpen = true;
         }
     }

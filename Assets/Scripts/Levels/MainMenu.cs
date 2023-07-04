@@ -41,6 +41,9 @@ public class MainMenu : MonoBehaviour, IDataPersistence {
     private void Start() {
         if (Application.platform == RuntimePlatform.WebGLPlayer) quitButton.gameObject.SetActive(false);
 
+        GameManager.Instance.InnerPlayer.gameObject.SetActive(false);
+        GameManager.Instance.OuterPlayer.gameObject.SetActive(false);
+        
         // Initially add home page to stack
         menuStack.Push(homePage);
     }

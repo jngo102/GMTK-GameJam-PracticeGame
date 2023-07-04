@@ -5116,6 +5116,7 @@ MonoBehaviour:
   healthManager: {fileID: 6852802004102328410}
   runSpeed: 5
   sprintSpeed: 8
+  deathPause: 2
 --- !u!114 &3491300487914331937
 MonoBehaviour:
   m_ObjectHideFlags: 0

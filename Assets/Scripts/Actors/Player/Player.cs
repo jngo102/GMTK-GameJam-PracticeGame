@@ -20,8 +20,6 @@ public class Player : MonoBehaviour, ISpawnable {
     protected string CollapseParameter => "Collapse";
     protected string DeathParameter => "Death";
     
-    private bool canDoubleJump = true;
-    
     /// <summary>
     ///     The input manager for this specific player instance.
     /// </summary>
@@ -94,7 +92,7 @@ public class Player : MonoBehaviour, ISpawnable {
     /// <summary>
     ///     Perform a jump.
     /// </summary>
-    public void Jump() {
+    public virtual void Jump() {
         if (Grounder.IsGrounded() || coyoteTimer <= coyoteTime) {
             Animator.SetBool(JumpParameter, true);
             Animator.SetBool(FallParameter, false);
@@ -102,17 +100,7 @@ public class Player : MonoBehaviour, ISpawnable {
             Animator.SetBool(GlideParameter, false);
             coyoteTimer = coyoteTime + 1;
             Jumper.Jump();
-        } else if (canDoubleJump) {
-            DoubleJump();
         }
-    }
-
-    public void DoubleJump() {
-        Animator.SetBool(JumpParameter, true);
-        Animator.SetBool(FallParameter, false);
-        Animator.SetBool(GlideParameter, false);
-        canDoubleJump = false;
-        Jumper.Jump();
     }
 
     /// <summary>
@@ -123,7 +111,6 @@ public class Player : MonoBehaviour, ISpawnable {
         Animator.SetBool(GlideParameter, false);
         Animator.SetBool(LandParameter, true);
         if (InputHandler.IsEnabled && InputHandler.Jump.IsBuffered()) Jump();
-        canDoubleJump = true;
     }
 
     /// <summary>

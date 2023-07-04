@@ -1,18 +1,14 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Flyer))]
-public class FlyingEnemy : MonoBehaviour {
-    [SerializeField] private DetectArea detectArea;
-
+public class FlyingEnemy : Enemy {
     private Flyer flyer;
 
     private void Awake() {
         flyer = GetComponent<Flyer>();
-
-        detectArea.Detected += OnDetect;
     }
 
-    private void OnDetect(Transform detectedTransform) {
+    protected override void OnDetect(Transform detectedTransform) {
         flyer.FlyTo(detectedTransform.position);
     }
 }

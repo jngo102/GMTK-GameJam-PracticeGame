@@ -1,4 +1,4 @@
-<h1 style="text-align:center">Unity Game Template</h1>
+<h1 style="text-align:center">GMTK Game Jam Practice Game</h1>
 <h2 style="text-align:center">Links</h2>
 <div style="text-align:center">
     <a href="https://jngo102.itch.io/gmtk-practice-game?secret=RNKkltFOAf7kEwbrO7KRDVt6Tk" alt="Itch.io profile">

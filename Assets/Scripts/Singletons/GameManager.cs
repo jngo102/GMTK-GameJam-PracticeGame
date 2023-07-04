@@ -62,33 +62,34 @@ public class GameManager : Singleton<GameManager> {
         while (!loadOperation.isDone) yield return null;
         SaveDataManager.Instance.LoadGame();
         switch (sceneType) {
-            case SceneType.Inner:
+            case SceneType.Inner when SceneData.IsGameplayScene(sceneName):
                 SceneSwitcher.ActivateInnerScene();
                 switch (sceneTransitionType) {
-                    case SceneTransitionType.Level when SceneData.IsGameplayScene(sceneName) && entryName != null:
+                    case SceneTransitionType.Level when entryName != null:
                         StartInnerLevel(entryName);
                         break;
-                    case SceneTransitionType.MainMenu when SceneData.IsGameplayScene(sceneName):
+                    case SceneTransitionType.MainMenu:
                         StartInnerLevel();
                         break;
                 }
 
                 break;
-            case SceneType.Outer:
+            case SceneType.Outer when SceneData.IsGameplayScene(sceneName):
                 SceneSwitcher.ActivateOuterScene();
                 switch (sceneTransitionType) {
-                    case SceneTransitionType.Level when SceneData.IsGameplayScene(sceneName) && entryName != null:
+                    case SceneTransitionType.Level when entryName != null:
                         StartOuterLevel(entryName);
                         break;
-                    case SceneTransitionType.MainMenu when SceneData.IsGameplayScene(sceneName):
+                    case SceneTransitionType.MainMenu:
                         StartOuterLevel();
                         break;
                 }
 
                 break;
         }
-
-        SwitchPlayer(sceneType);
+        
+        if (SceneData.IsGameplayScene(sceneName)) SwitchPlayer(sceneType);
+        
         LevelStarted?.Invoke();
 
         yield return fader.FadeOut();
