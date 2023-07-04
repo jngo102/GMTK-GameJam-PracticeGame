@@ -19,7 +19,7 @@ public class Grounder : MonoBehaviour {
         collider = GetComponent<Collider2D>();
     }
 
-    private void Update() {
+    private void LateUpdate() {
         WasGrounded = IsGrounded();
     }
 

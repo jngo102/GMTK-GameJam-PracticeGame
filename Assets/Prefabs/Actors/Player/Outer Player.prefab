@@ -5024,6 +5024,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7282dd83450dad54497f230d47d32537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpSound: {fileID: 8300000, guid: 1617662b97e38a9408d49d53ca12492f, type: 3}
+  landSound: {fileID: 8300000, guid: 10839a000cd27264ba648d21bef925bd, type: 3}
   fallingGravityScale: 5
   maxJumpHeight: 2.5
   risingGravityScale: 5

@@ -99,6 +99,7 @@ public class Player : MonoBehaviour, ISpawnable {
             Animator.SetBool(JumpParameter, true);
             Animator.SetBool(FallParameter, false);
             Animator.SetBool(LandParameter, false);
+            Animator.SetBool(GlideParameter, false);
             coyoteTimer = coyoteTime + 1;
             Jumper.Jump();
         } else if (canDoubleJump) {

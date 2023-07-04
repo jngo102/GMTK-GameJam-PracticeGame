@@ -57,7 +57,7 @@ public class InnerPlayer : Player {
 
         var inputVector = InputHandler.Move.ReadValue<Vector2>();
         Runner.SmoothRun(inputVector.x);
-        if (inputVector.x == 0 && !Animator.GetBool(RunParameter)) {
+        if (inputVector.magnitude > 0 && !Animator.GetBool(RunParameter)) {
             Animator.SetBool(RunParameter, true);
         }
         else if (Animator.GetBool(RunParameter)) {

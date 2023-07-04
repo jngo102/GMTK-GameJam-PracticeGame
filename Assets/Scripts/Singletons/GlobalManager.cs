@@ -21,6 +21,7 @@ public class GlobalManager : MonoBehaviour {
     ///     Create instances of all singletons.
     /// </summary>
     private static void CreateSingletons() {
+        var audioManager = AudioManager.Instance;
         var gameManager = GameManager.Instance;
         var uiManager = UIManager.Instance;
         var saveDataManager = SaveDataManager.Instance;

@@ -32,9 +32,9 @@ public class OuterPlayer : Player {
             Runner.StopRun();
         }
 
-        if (Body.velocity.y <= 0 && InputHandler.Jump.InputAction.IsPressed() && !glider.IsGliding) {
+        if (Body.velocity.y <= 0 && InputHandler.Jump.InputAction.IsPressed() && !InputHandler.Jump.IsBuffered() && !glider.IsGliding) { 
             Animator.SetBool(GlideParameter, true);
-            glider.StartGliding();   
+            glider.StartGliding();
         }
     }
 

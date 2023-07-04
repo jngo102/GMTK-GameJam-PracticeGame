@@ -6,6 +6,9 @@ using UnityEngine;
 [RequireComponent(typeof(Grounder))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class Jumper : MonoBehaviour {
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip landSound;
+    
     public delegate void JumpEvent();
 
     public delegate void LandEvent();
@@ -58,7 +61,7 @@ public class Jumper : MonoBehaviour {
     }
 
     private void Update() {
-        if (body.velocity.y <= 0 && !grounder.WasGrounded && grounder.IsGrounded()) Land();
+        if (body.velocity.y <= 0.1f && !grounder.WasGrounded && grounder.IsGrounded()) Land();
 
         if (!ControllingGravity) return;
         body.gravityScale = body.velocity.y switch {
@@ -93,6 +96,7 @@ public class Jumper : MonoBehaviour {
     ///     Perform a vertical jump.
     /// </summary>
     public void Jump() {
+        AudioManager.Instance.SpawnAndPlay(jumpSound, transform.position);
         body.velocity = new Vector2(body.velocity.x, jumpForce);
         Jumped?.Invoke();
     }
@@ -131,6 +135,7 @@ public class Jumper : MonoBehaviour {
     ///     Perform a landing.
     /// </summary>
     public void Land() {
+        AudioManager.Instance.SpawnAndPlay(landSound, transform.position);
         Landed?.Invoke();
     }
 }

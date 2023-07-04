@@ -26,10 +26,8 @@ public class TimedDoor : MonoBehaviour {
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other) {
-        Debug.Log("Triggered by " + other.name);
+    private void OnTriggerExit2D(Collider2D other) {
         if (other.CompareTag("Player") && !isOpen) {
-            Debug.Log("OPEN DOOR") ;
             doorTimer = 0;
             animator.Play("Open");
             isOpen = true;
