@@ -59,7 +59,7 @@ public class OuterPlayer : Player {
         base.Update();
 
         InputVector = InputHandler.Move.ReadValue<Vector2>();
-        if (InputVector.magnitude > 0) {
+        if (Mathf.Abs(InputVector.x) > 0.1f) {
             if (!Animator.GetBool(RunParameter)) {
                 Animator.SetBool(RunParameter, true);
             }
