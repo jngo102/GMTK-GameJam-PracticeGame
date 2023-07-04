@@ -31,10 +31,21 @@ public class InnerPlayer : Player {
         weapon.Attack();
     }
 
-    private void OnAttackRightStart(InputAction.CallbackContext context) {
+    private void OnAttackRightStart(InputAction.CallbackContext context)
+    {
         Facer.FaceDirection(1);
         weapon.Attack();
     }
+
+    public override void Jump()
+    {
+        if (Grounder.IsGrounded() || coyoteTimer <= coyoteTime)
+        {
+            coyoteTimer = coyoteTime + 1;
+            Jumper.Jump();
+        }
+    }
+
 
     /// <summary>
     ///     Callback for when the player ends a jump.

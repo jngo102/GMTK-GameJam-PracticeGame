@@ -84,8 +84,8 @@ public class Player : MonoBehaviour, ISpawnable {
     /// <summary>
     ///     Perform a jump.
     /// </summary>
-    public void Jump() {
-        if (Grounder.IsGrounded() || coyoteTimer <= coyoteTime) {
+    public virtual void Jump() {
+        if (Grounder.IsGrounded() /*|| coyoteTimer <= coyoteTime*/) {
             coyoteTimer = coyoteTime + 1;
             Jumper.Jump();
         } else if (canDoubleJump) {
@@ -103,7 +103,7 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void OnLand() {
         if (InputHandler.IsEnabled && InputHandler.Jump.IsBuffered()) Jump();
-        Grounder.ForceGround();
+        //Grounder.ForceGround();
         canDoubleJump = true;
     }
 
@@ -199,7 +199,7 @@ public class Player : MonoBehaviour, ISpawnable {
     /// <summary>
     ///     The duration before the player actually falls and cannot perform a jump.
     /// </summary>
-    [SerializeField] private float coyoteTime = 0.1f;
+    [SerializeField] protected float coyoteTime = 0.1f;
 
     [SerializeField] private ParticleSystem runParticles;
     [SerializeField] private DeathManager deathManager;
@@ -219,7 +219,7 @@ public class Player : MonoBehaviour, ISpawnable {
 
     #region Tracked Values
 
-    private float coyoteTimer;
+    protected float coyoteTimer;
     protected Vector2 InputVector;
 
     #endregion
