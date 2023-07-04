@@ -53,7 +53,7 @@ public class Grounder : MonoBehaviour {
             var rayOrigin =
                 new Vector2(bounds.min.x + bounds.size.x * rayIdx / (numGroundCheckRays - 1),
                     bounds.min.y);
-            var hit = Physics2D.Raycast(rayOrigin, Vector2.down, Mathf.Infinity,
+            var hit = Physics2D.Raycast(rayOrigin, Vector2.down, groundCheckRayLength,
                 LayerMask.GetMask("Terrain"));
             if (hit) {
                 var selfTransform = transform;
