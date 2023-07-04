@@ -55,7 +55,14 @@ public class InnerPlayer : Player {
     protected override void Update() {
         base.Update();
 
-        Runner.SmoothRun(InputHandler.Move.ReadValue<Vector2>().x);
+        var inputVector = InputHandler.Move.ReadValue<Vector2>();
+        Runner.SmoothRun(inputVector.x);
+        if (inputVector.x == 0 && !Animator.GetBool(RunParameter)) {
+            Animator.SetBool(RunParameter, true);
+        }
+        else if (Animator.GetBool(RunParameter)) {
+            Animator.SetBool(RunParameter, false);
+        }
         //Facer.CheckFlip();
 
         if (InputHandler.AttackLeft.IsBuffered()) {

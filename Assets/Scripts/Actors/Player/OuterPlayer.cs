@@ -19,15 +19,23 @@ public class OuterPlayer : Player {
 
         InputVector = InputHandler.Move.ReadValue<Vector2>();
         if (InputVector.magnitude > 0) {
+            if (!Animator.GetBool(RunParameter)) {
+                Animator.SetBool(RunParameter, true);
+            }
             Runner.Run(InputVector.x);
             Facer.CheckFlip();
         }
         else {
+            if (Animator.GetBool(RunParameter)) {
+                Animator.SetBool(RunParameter, false);
+            }
             Runner.StopRun();
         }
 
-        if (Body.velocity.y <= 0 && InputHandler.Jump.InputAction.IsPressed() && !glider.IsGliding)
-            glider.StartGliding();
+        if (Body.velocity.y <= 0 && InputHandler.Jump.InputAction.IsPressed() && !glider.IsGliding) {
+            Animator.SetBool(GlideParameter, true);
+            glider.StartGliding();   
+        }
     }
 
     private void OnEnable() {
@@ -56,6 +64,7 @@ public class OuterPlayer : Player {
 
     private void OnJumpStop(InputAction.CallbackContext context) {
         if (!glider.IsGliding) return;
+        Animator.SetBool(GlideParameter, false);
         glider.StopGliding();
     }
 

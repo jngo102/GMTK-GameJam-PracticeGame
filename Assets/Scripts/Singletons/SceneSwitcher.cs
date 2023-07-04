@@ -63,6 +63,6 @@ public class SceneSwitcher : Singleton<SceneSwitcher> {
         foreach (var gameObject in SceneManager.GetSceneByName(CurrentOuterScene).GetRootGameObjects())
             gameObject.SetActive(true);
 
-        UIManager.Instance.OpenUI<Vignette>();
+        // UIManager.Instance.OpenUI<Vignette>();
     }
 }

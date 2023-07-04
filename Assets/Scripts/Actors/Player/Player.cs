@@ -5,12 +5,21 @@ using UnityEngine.SceneManagement;
 /// <summary>
 ///     Controller for a player.
 /// </summary>
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Grounder))]
 [RequireComponent(typeof(Facer))]
 [RequireComponent(typeof(Jumper))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Runner))]
 public class Player : MonoBehaviour, ISpawnable {
+    protected string RunParameter => "Run";
+    protected string JumpParameter => "Jump";
+    protected string FallParameter => "Fall";
+    protected string LandParameter => "Land";
+    protected string GlideParameter => "Glide";
+    protected string CollapseParameter => "Collapse";
+    protected string DeathParameter => "Death";
+    
     private bool canDoubleJump = true;
     
     /// <summary>
@@ -42,8 +51,8 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void EnableBaseInputs() {
         InputHandler.Jump.InputAction.performed += OnJumpStart;
-        //InputHandler.Move.performed += OnMoveStart;
-        //InputHandler.Move.canceled += OnMoveStop;
+        // InputHandler.Move.performed += OnMoveStart;
+        // InputHandler.Move.canceled += OnMoveStop;
     }
 
     /// <summary>
@@ -66,6 +75,7 @@ public class Player : MonoBehaviour, ISpawnable {
     ///     Get all components on the player.
     /// </summary>
     private void GetComponents() {
+        Animator = GetComponent<Animator>();
         Body = GetComponent<Rigidbody2D>();
         Facer = GetComponent<Facer>();
         Grounder = GetComponent<Grounder>();
@@ -86,6 +96,9 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     public void Jump() {
         if (Grounder.IsGrounded() || coyoteTimer <= coyoteTime) {
+            Animator.SetBool(JumpParameter, true);
+            Animator.SetBool(FallParameter, false);
+            Animator.SetBool(LandParameter, false);
             coyoteTimer = coyoteTime + 1;
             Jumper.Jump();
         } else if (canDoubleJump) {
@@ -94,6 +107,9 @@ public class Player : MonoBehaviour, ISpawnable {
     }
 
     public void DoubleJump() {
+        Animator.SetBool(JumpParameter, true);
+        Animator.SetBool(FallParameter, false);
+        Animator.SetBool(GlideParameter, false);
         canDoubleJump = false;
         Jumper.Jump();
     }
@@ -102,8 +118,10 @@ public class Player : MonoBehaviour, ISpawnable {
     ///     Callback for when the player lands.
     /// </summary>
     private void OnLand() {
+        Animator.SetBool(FallParameter, false);
+        Animator.SetBool(GlideParameter, false);
+        Animator.SetBool(LandParameter, true);
         if (InputHandler.IsEnabled && InputHandler.Jump.IsBuffered()) Jump();
-        Grounder.ForceGround();
         canDoubleJump = true;
     }
 
@@ -141,6 +159,16 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void UpdateTrackedValues() {
         coyoteTimer = Mathf.Clamp(coyoteTimer + Time.deltaTime, 0, coyoteTime + 1);
+    }
+
+    private void UpdateAnimator() {
+        if (Body.velocity.y <= 0 && !Animator.GetBool(FallParameter) && !Animator.GetBool(LandParameter) &&
+            !Animator.GetBool(GlideParameter)) {
+            if (Animator.GetBool(JumpParameter)) {
+                Animator.SetBool(JumpParameter, false);   
+            }
+            Animator.SetBool(FallParameter, true);
+        }
     }
 
     /// <summary>
@@ -209,6 +237,7 @@ public class Player : MonoBehaviour, ISpawnable {
 
     #region Components
 
+    protected Animator Animator;
     protected Rigidbody2D Body;
     protected Facer Facer;
     protected Grounder Grounder;
@@ -237,6 +266,7 @@ public class Player : MonoBehaviour, ISpawnable {
         HandleCoyoteTime();
         CheckGrounded();
         UpdateTrackedValues();
+        UpdateAnimator();
     }
 
     #endregion

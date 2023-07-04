@@ -32,6 +32,8 @@ public class Jumper : MonoBehaviour {
     ///     The force to apply to the actor when jumping.
     /// </summary>
     private float jumpForce;
+    
+    public bool ControllingGravity { get; set; } = true;
 
     /// <summary>
     ///     The rate at which the actor falls during a jump.
@@ -58,6 +60,7 @@ public class Jumper : MonoBehaviour {
     private void Update() {
         if (body.velocity.y <= 0 && !grounder.WasGrounded && grounder.IsGrounded()) Land();
 
+        if (!ControllingGravity) return;
         body.gravityScale = body.velocity.y switch {
             > 0 => risingGravityScale,
             <= 0 => fallingGravityScale,

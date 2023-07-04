@@ -16,13 +16,13 @@ public class Glider : MonoBehaviour {
     }
 
     public void StartGliding() {
-        if (jumper) jumper.enabled = false;
+        if (jumper) jumper.ControllingGravity = false;
         IsGliding = true;
         body.gravityScale = glidingGravityScale;
     }
 
     public void StopGliding() {
-        if (jumper) jumper.enabled = true;
+        if (jumper) jumper.ControllingGravity = true;
         IsGliding = false;
         body.gravityScale = fallingGravityScale;
     }
