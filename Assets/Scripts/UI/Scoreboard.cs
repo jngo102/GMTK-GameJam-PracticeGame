@@ -5,10 +5,9 @@ using UnityEngine;
 ///     A scoreboard that displays the player's current score.
 /// </summary>
 public class Scoreboard : BaseUI {
+    [SerializeField] private TextMeshPro scoreValue;
     private int currentScore;
 
-    [SerializeField] private TextMeshPro scoreValue;
-    
     /// <summary>
     ///     The player's current score.
     /// </summary>
@@ -35,7 +34,7 @@ public class Scoreboard : BaseUI {
     public void SubtractScore(int score) {
         CurrentScore -= score;
     }
-    
+
     /// <summary>
     ///     Reset the current score to 0.
     /// </summary>

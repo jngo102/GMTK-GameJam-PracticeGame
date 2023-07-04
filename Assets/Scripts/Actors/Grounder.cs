@@ -57,7 +57,8 @@ public class Grounder : MonoBehaviour {
                 LayerMask.GetMask("Terrain"));
             if (hit) {
                 var selfTransform = transform;
-                selfTransform.position = new Vector2(selfTransform.position.x, hit.point.y + collider.bounds.size.y / 2);
+                selfTransform.position =
+                    new Vector2(selfTransform.position.x, hit.point.y + collider.bounds.size.y / 2);
                 return;
             }
         }

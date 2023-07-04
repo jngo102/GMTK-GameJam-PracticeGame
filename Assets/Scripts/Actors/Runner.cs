@@ -14,9 +14,9 @@ public class Runner : MonoBehaviour {
     /// </summary>
     public float RunSpeed = 5;
 
-    [SerializeField] float acceleration;
-    [SerializeField] float deceleration;
-    [SerializeField] float velPower;
+    [SerializeField] private float acceleration;
+    [SerializeField] private float deceleration;
+    [SerializeField] private float velPower;
 
     private Rigidbody2D body;
     private Facer facer;
@@ -31,12 +31,11 @@ public class Runner : MonoBehaviour {
     /// </summary>
     public event OnAutoRunFinish AutoRunFinished;
 
-    public void SmoothRun(float direction)
-    {
-        float targetSpeed = direction * RunSpeed;
-        float speedDiff = targetSpeed - body.velocity.x;
-        float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deceleration;
-        float movement = Mathf.Pow(Mathf.Abs(speedDiff) * accelRate, velPower) * Mathf.Sign(speedDiff);
+    public void SmoothRun(float direction) {
+        var targetSpeed = direction * RunSpeed;
+        var speedDiff = targetSpeed - body.velocity.x;
+        var accelRate = Mathf.Abs(targetSpeed) > 0.01f ? acceleration : deceleration;
+        var movement = Mathf.Pow(Mathf.Abs(speedDiff) * accelRate, velPower) * Mathf.Sign(speedDiff);
 
         body.AddForce(movement * Vector2.right);
     }

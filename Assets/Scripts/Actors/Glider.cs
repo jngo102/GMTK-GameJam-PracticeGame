@@ -4,12 +4,12 @@ using UnityEngine;
 public class Glider : MonoBehaviour {
     [SerializeField] private float glidingGravityScale = 1;
     [SerializeField] private float fallingGravityScale = 5;
-    
-    public bool IsGliding { get; private set; }
-    
-    private Jumper jumper;
     private Rigidbody2D body;
-    
+
+    private Jumper jumper;
+
+    public bool IsGliding { get; private set; }
+
     private void Awake() {
         body = GetComponent<Rigidbody2D>();
         jumper = GetComponent<Jumper>();

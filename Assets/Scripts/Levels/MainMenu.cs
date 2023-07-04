@@ -35,7 +35,7 @@ public class MainMenu : MonoBehaviour, IDataPersistence {
     ///     The last scene that the player saved at.
     /// </summary>
     private string lastSaveInnerScene;
-    
+
     private string lastSaveOuterScene;
 
     private void Start() {

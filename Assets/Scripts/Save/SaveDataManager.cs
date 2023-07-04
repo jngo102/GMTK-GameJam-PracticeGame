@@ -13,6 +13,11 @@ public class SaveDataManager : Singleton<SaveDataManager> {
     private string fileName;
 
     /// <summary>
+    ///     The ID of the currently selected profile.
+    /// </summary>
+    private readonly string selectedProfileId = "0";
+
+    /// <summary>
     ///     Handles the actual saving and loading of data to and from disk.
     /// </summary>
     private SaveFileManager fileManager;
@@ -21,11 +26,6 @@ public class SaveDataManager : Singleton<SaveDataManager> {
     ///     The save data instance.
     /// </summary>
     private SaveData saveData;
-
-    /// <summary>
-    ///     The ID of the currently selected profile.
-    /// </summary>
-    private readonly string selectedProfileId = "0";
 
     private void OnApplicationQuit() {
         SaveGame();
