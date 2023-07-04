@@ -12,10 +12,10 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/Level1.unity
+    path: Assets/Scenes/Inner.unity
     guid: 8fe4887c5986fed4db840476bdf69dc2
   - enabled: 1
-    path: Assets/Scenes/Level2.unity
+    path: Assets/Scenes/Outer.unity
     guid: 1a619a06d3a6a97488ea79ff70b97648
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: d6916a987ba23f445a994ed9b279470f, type: 2}

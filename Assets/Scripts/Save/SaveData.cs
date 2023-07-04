@@ -28,13 +28,16 @@ public class SaveData {
     /// <summary>
     ///     The scene of the save spot that the player last saved at.
     /// </summary>
-    public string saveScene;
+    public string saveInnerScene;
+    
+    public string saveOuterScene;
 
     public SaveData() {
         currentHealth = 5;
         maxHealth = 5;
         bindingOverrides = "";
         language = "en";
-        saveScene = "Level1";
+        saveInnerScene = "Inner";
+        saveOuterScene = "Outer";
     }
 }

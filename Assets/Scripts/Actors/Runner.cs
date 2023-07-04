@@ -12,7 +12,7 @@ public class Runner : MonoBehaviour {
     /// <summary>
     ///     The speed at which the actor runs.
     /// </summary>
-    [SerializeField] private float runSpeed = 5;
+    public float RunSpeed = 5;
 
     private Rigidbody2D body;
     private Facer facer;
@@ -32,7 +32,7 @@ public class Runner : MonoBehaviour {
     /// </summary>
     /// <param name="direction">The direction that the actor runs in; negative means to the left, positive to the right.</param>
     public void Run(float direction) {
-        var velocityX = direction * runSpeed;
+        var velocityX = direction * RunSpeed;
         body.velocity = new Vector2(velocityX, body.velocity.y);
         var scaleX = transform.localScale.x;
         if ((scaleX < 0 && velocityX > 0) || (scaleX > 0 && velocityX < 0)) facer.Flip();

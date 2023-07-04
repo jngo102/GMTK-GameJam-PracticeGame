@@ -24,6 +24,7 @@ public class GlobalManager : MonoBehaviour {
         var gameManager = GameManager.Instance;
         var uiManager = UIManager.Instance;
         var saveDataManager = SaveDataManager.Instance;
+        var sceneSwitcher = SceneSwitcher.Instance;
 #if UNITY_EDITOR
         Instantiate(Resources.Load<GameObject>($"{SingletonsDirName}/UnityExplorer"));
 #endif

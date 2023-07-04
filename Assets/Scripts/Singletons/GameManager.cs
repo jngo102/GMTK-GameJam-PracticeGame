@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,37 +12,26 @@ public class GameManager : Singleton<GameManager> {
     /// <summary>
     ///     The player prefab.
     /// </summary>
-    [SerializeField] private Player playerPrefab;
+    [SerializeField] private InnerPlayer innerPlayerPrefab;
+
+    [SerializeField] private OuterPlayer outerPlayerPrefab;
+
+    private InnerPlayer innerPlayer;
+    private OuterPlayer outerPlayer;
 
     public delegate void OnLevelStart();
 
     public event OnLevelStart LevelStarted;
 
-    private PlayerInputManager playerInputManager;
-
-    private readonly Dictionary<InputDevice, Player> players = new();
-    
     protected override void OnAwake() {
-        playerInputManager = GetComponent<PlayerInputManager>();
-
-        InputSystem.onDeviceChange += OnDeviceChange;
+        CreatePlayers();
     }
 
-    /// <summary>
-    ///     Callback for when a controller event occurs.
-    /// </summary>
-    /// <param name="device">The device that triggered the event.</param>
-    /// <param name="change">The change that occurred.</param>
-    private void OnDeviceChange(InputDevice device, InputDeviceChange change) {
-        switch (change) {
-            case InputDeviceChange.Added:
-            case InputDeviceChange.Reconnected:
-                AddNewPlayer(device);
-                break;
-            case InputDeviceChange.Disconnected:
-                RemoveExistingPlayer(device);
-                break;
-        }
+    private void CreatePlayers() {
+        innerPlayer = Instantiate(innerPlayerPrefab);
+        outerPlayer = Instantiate(outerPlayerPrefab);
+        innerPlayer.gameObject.SetActive(false);
+        outerPlayer.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -52,9 +40,9 @@ public class GameManager : Singleton<GameManager> {
     /// <param name="sceneName">The name of the scene to change to.</param>
     /// <param name="sceneTransitionType">The type of scene transition when changing scenes.</param>
     /// <param name="entryName">The name of the scene transition trigger to enter from after the scene changes.</param>
-    public void ChangeScene(string sceneName, SceneTransitionType sceneTransitionType = SceneTransitionType.Level,
-        string entryName = null) {
-        StartCoroutine(ChangeSceneRoutine(sceneName, sceneTransitionType, entryName));
+    public void LoadScene(string sceneName, SceneType sceneType,
+        SceneTransitionType sceneTransitionType = SceneTransitionType.Level, string entryName = null) {
+        StartCoroutine(LoadSceneRoutine(sceneName, sceneType, sceneTransitionType, entryName));
     }
 
     /// <summary>
@@ -63,34 +51,71 @@ public class GameManager : Singleton<GameManager> {
     /// <param name="sceneName">The name of the scene to change to.</param>
     /// <param name="sceneTransitionType">The type of scene transition when changing scenes.</param>
     /// <param name="entryName">The name of the scene transition trigger to load from.</param>
-    /// <returns></returns>
-    public IEnumerator ChangeSceneRoutine(string sceneName, SceneTransitionType sceneTransitionType, string entryName) {
+    public IEnumerator LoadSceneRoutine(string sceneName, SceneType sceneType, SceneTransitionType sceneTransitionType,
+        string entryName) {
         var fader = UIManager.Instance.GetUI<Fader>();
         yield return fader.FadeIn();
         SaveDataManager.Instance.SaveGame();
-        yield return SceneManager.LoadSceneAsync(sceneName);
+        var loadOperation = SceneManager.LoadSceneAsync(sceneName,
+            sceneType == SceneType.Inner ? LoadSceneMode.Single : LoadSceneMode.Additive);
+        while (!loadOperation.isDone) {
+            yield return null;
+        }
         SaveDataManager.Instance.LoadGame();
-        SetupPlayers();
-        switch (sceneTransitionType) {
-            case SceneTransitionType.Level when SceneData.IsGameplayScene(sceneName) && entryName != null:
-                StartLevel(entryName);
+        switch (sceneType) {
+            case SceneType.Inner:
+                SceneSwitcher.ActivateInnerScene();
+                switch (sceneTransitionType) {
+                    case SceneTransitionType.Level when SceneData.IsGameplayScene(sceneName) && entryName != null:
+                        StartInnerLevel(entryName);
+                        break;
+                    case SceneTransitionType.MainMenu when SceneData.IsGameplayScene(sceneName):
+                        StartInnerLevel();
+                        break;
+                }
+
                 break;
-            case SceneTransitionType.MainMenu when SceneData.IsGameplayScene(sceneName):
-                StartLevel();
+            case SceneType.Outer:
+                SceneSwitcher.ActivateOuterScene();
+                switch (sceneTransitionType) {
+                    case SceneTransitionType.Level when SceneData.IsGameplayScene(sceneName) && entryName != null:
+                        StartOuterLevel(entryName);
+                        break;
+                    case SceneTransitionType.MainMenu when SceneData.IsGameplayScene(sceneName):
+                        StartOuterLevel();
+                        break;
+                }
+
                 break;
         }
         
+        SwitchPlayer(sceneType);
         LevelStarted?.Invoke();
-        
+
         yield return fader.FadeOut();
     }
 
-    /// <summary>
-    ///     Load the player at a save spot.
-    /// </summary>
-    /// <param name="saveScene">The saved scene to load.</param>
-    public void LoadSaveSpot(string saveScene) {
-        ChangeScene(saveScene, SceneTransitionType.MainMenu);
+    public void SwitchPlayer(SceneType playerType) {
+        var cameraController = FindObjectOfType<CameraController>();
+        cameraController.ClearTargets();
+        switch (playerType) {
+            case SceneType.Inner:
+                innerPlayer.gameObject.SetActive(true);
+                cameraController.AddTarget(innerPlayer.transform);
+                outerPlayer.gameObject.SetActive(false);
+                break;
+            case SceneType.Outer:
+                outerPlayer.gameObject.SetActive(true);
+                cameraController.AddTarget(outerPlayer.transform);
+                innerPlayer.gameObject.SetActive(false);
+                break;
+        }
+    }
+
+    public IEnumerator LoadSaveSpot(string saveInnerScene, string saveOuterScene) {
+        StartCoroutine(LoadSceneRoutine(saveInnerScene, SceneType.Inner, SceneTransitionType.MainMenu, null));
+        yield return SceneSwitcher.LoadOuterScene(saveOuterScene, SceneTransitionType.MainMenu, null);
+        SceneSwitcher.ActivateOuterScene();
     }
 
     /// <summary>
@@ -128,90 +153,102 @@ public class GameManager : Singleton<GameManager> {
     ///     Start a gameplay level from a scene transition trigger.
     /// </summary>
     /// <param name="entryName">The name of the scene transition trigger to enter from.</param>
-    private void StartLevel(string entryName) {
-        var sceneTransitionTrigger = FindObjectsOfType<SceneTransitionTrigger>()
-            .FirstOrDefault(trigger => trigger.name == entryName);
+    private void StartInnerLevel(string entryName) {
+        var sceneTransitionTrigger = FindObjectsOfType<SceneTransitionTrigger>().FirstOrDefault(trigger =>
+            trigger.name == entryName && trigger.gameObject.scene.name == SceneManager.GetActiveScene().name);
         if (!sceneTransitionTrigger) {
             Debug.LogError(
                 $"No scene transition trigger found in scene {SceneManager.GetActiveScene().name} with entry name {entryName}.");
             return;
         }
-        
+
+        sceneTransitionTrigger.SceneType = SceneType.Inner;
         var triggerCollider = sceneTransitionTrigger.GetComponent<Collider2D>();
         var triggerTransform = sceneTransitionTrigger.transform;
         var triggerScale = triggerTransform.localScale;
+        var triggerPosition = triggerTransform.position;
         var triggerWidth = triggerCollider.bounds.size.x;
-        var targetX = triggerTransform.position.x + triggerWidth * triggerScale.x;
-        foreach (var (_, player) in players) {
-            triggerCollider.enabled = false;
-            player.transform.position = sceneTransitionTrigger.transform.position;
-            var playerInputHandler = player.GetComponent<PlayerInputHandler>();
-            playerInputHandler.Disable();
-            var playerScale = player.transform.localScale;
-            playerScale = new Vector3(Mathf.Sign(triggerScale.x) * playerScale.x, playerScale.y, playerScale.z);
-            player.transform.localScale = playerScale;
-            var playerRunner = player.GetComponent<Runner>();
-            playerRunner.RunTo(targetX);
+        var targetX = triggerPosition.x + triggerWidth * triggerScale.x;
+        triggerCollider.enabled = false;
+        innerPlayer.transform.position = triggerPosition;
+        var playerInputHandler = innerPlayer.GetComponent<PlayerInputHandler>();
+        playerInputHandler.Disable();
+        var playerScale = innerPlayer.transform.localScale;
+        playerScale = new Vector3(Mathf.Sign(triggerScale.x) * playerScale.x, playerScale.y, playerScale.z);
+        innerPlayer.transform.localScale = playerScale;
+        var playerRunner = innerPlayer.GetComponent<Runner>();
+        playerRunner.RunTo(targetX);
 
-            void RunFinishedHandler(Runner runner) {
-                runner.StopRun();
-                playerInputHandler.Enable();
-                triggerCollider.enabled = true;
-                playerRunner.AutoRunFinished -= RunFinishedHandler;
-            }
-            
-            playerRunner.AutoRunFinished += RunFinishedHandler;
+        void RunFinishedHandler(Runner runner) {
+            runner.StopRun();
+            playerInputHandler.Enable();
+            triggerCollider.enabled = true;
+            playerRunner.AutoRunFinished -= RunFinishedHandler;
         }
+
+        playerRunner.AutoRunFinished += RunFinishedHandler;
+    }
+
+    private void StartOuterLevel(string entryName) {
+        var sceneTransitionTrigger = FindObjectsOfType<SceneTransitionTrigger>().FirstOrDefault(trigger =>
+            trigger.name == entryName && trigger.gameObject.scene.name == SceneSwitcher.CurrentOuterScene);
+        if (!sceneTransitionTrigger) {
+            Debug.LogError(
+                $"No scene transition trigger found in scene {SceneSwitcher.CurrentOuterScene} with entry name {entryName}.");
+            return;
+        }
+
+        sceneTransitionTrigger.SceneType = SceneType.Outer;
+        var triggerCollider = sceneTransitionTrigger.GetComponent<Collider2D>();
+        var triggerTransform = sceneTransitionTrigger.transform;
+        var triggerScale = triggerTransform.localScale;
+        var triggerPosition = triggerTransform.position;
+        var triggerWidth = triggerCollider.bounds.size.x;
+        var targetX = triggerPosition.x + triggerWidth * triggerScale.x;
+        triggerCollider.enabled = false;
+        outerPlayer.transform.position = triggerPosition;
+        var playerInputHandler = outerPlayer.GetComponent<PlayerInputHandler>();
+        playerInputHandler.Disable();
+        var playerScale = outerPlayer.transform.localScale;
+        playerScale = new Vector3(Mathf.Sign(triggerScale.x) * playerScale.x, playerScale.y, playerScale.z);
+        outerPlayer.transform.localScale = playerScale;
+        var playerRunner = outerPlayer.GetComponent<Runner>();
+        playerRunner.RunTo(targetX);
+
+        void RunFinishedHandler(Runner runner) {
+            runner.StopRun();
+            playerInputHandler.Enable();
+            triggerCollider.enabled = true;
+            playerRunner.AutoRunFinished -= RunFinishedHandler;
+        }
+
+        playerRunner.AutoRunFinished += RunFinishedHandler;
     }
 
     /// <summary>
     ///     Start a gameplay level from a save spot.
     /// </summary>
-    private void StartLevel() {
-        var saveSpot = FindObjectOfType<SaveSpot>();
+    private void StartInnerLevel() {
+        var saveSpot = FindObjectsOfType<SaveSpot>()
+            .FirstOrDefault(spot => spot.gameObject.scene.name == SceneManager.GetActiveScene().name);
         if (!saveSpot) {
             Debug.LogError($"No save spot found in scene {SceneManager.GetActiveScene().name}.");
             return;
         }
 
-        foreach (var (_, player) in players) {
-            player.transform.position = saveSpot.transform.position;
+        saveSpot.SceneType = SceneType.Inner;
+        innerPlayer.transform.position = saveSpot.transform.position;
+    }
+
+    private void StartOuterLevel() {
+        var saveSpot = FindObjectsOfType<SaveSpot>()
+            .FirstOrDefault(spot => spot.gameObject.scene.name == SceneSwitcher.CurrentOuterScene);
+        if (!saveSpot) {
+            Debug.LogError($"No save spot found in scene {SceneSwitcher.CurrentOuterScene}.");
+            return;
         }
-    }
 
-    /// <summary>
-    ///     Add a new player state to the game manager.
-    /// </summary>
-    /// <param name="device">The device that will be used to control the new player.</param>
-    private void AddNewPlayer(InputDevice device) {
-        var playerInput = playerInputManager.JoinPlayer(device.deviceId, -1, null, device);
-        var existingPlayer = players.Values.FirstOrDefault();
-        if (existingPlayer) playerInput.transform.position = existingPlayer.transform.position;
-        var player = playerInput.GetComponent<Player>();
-        player.gameObject.SetActive(SceneData.IsGameplayScene(SceneManager.GetActiveScene().name));
-        players.Add(device, player);
-    }
-
-    /// <summary>
-    ///     Remove an existing player state from the game manager. 
-    /// </summary>
-    /// <param name="device">The input device key associated with the player to remove.</param>
-    private void RemoveExistingPlayer(InputDevice device) {
-        Destroy(players[device].gameObject);
-        players.Remove(device);
-    }
-
-    /// <summary>
-    ///     Set up all the players for the new scene.
-    /// </summary>
-    private void SetupPlayers() {
-        foreach (var device in InputSystem.devices) {
-            if (device is not (Gamepad or Keyboard)) continue;
-            if (players.TryGetValue(device, out var player)) {
-                player.gameObject.SetActive(SceneData.IsGameplayScene(SceneManager.GetActiveScene().name));
-            } else {
-                AddNewPlayer(device);
-            }
-        }
+        saveSpot.SceneType = SceneType.Outer;
+        outerPlayer.transform.position = saveSpot.transform.position;
     }
 }

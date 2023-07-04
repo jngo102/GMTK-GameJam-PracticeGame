@@ -62,6 +62,7 @@ public class PauseMenu : BaseUI {
     public void QuitToMainMenu() {
         CloseQuitConfirmation();
         Close();
-        GameManager.Instance.ChangeScene("MainMenu", SceneTransitionType.MainMenu);
+        StartCoroutine(SceneSwitcher.UnloadOuterScene());
+        GameManager.Instance.LoadScene("MainMenu", SceneType.Inner);
     }
 }

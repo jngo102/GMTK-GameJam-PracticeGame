@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 ///     Controller for a player.
@@ -9,9 +10,6 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Jumper))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Runner))]
-[RequireComponent(typeof(PlayerInput))]
-[RequireComponent(typeof(HealthManager))]
-[RequireComponent(typeof(SquashStretchManager))]
 public class Player : MonoBehaviour, ISpawnable {
     #region Exposed Values
 
@@ -21,6 +19,8 @@ public class Player : MonoBehaviour, ISpawnable {
     [SerializeField] private float coyoteTime = 0.1f;
 
     [SerializeField] private ParticleSystem runParticles;
+    [SerializeField] private DeathManager deathManager;
+    [SerializeField] private HealthManager healthManager;
     
     #endregion
 
@@ -31,45 +31,34 @@ public class Player : MonoBehaviour, ISpawnable {
     
     #region Components
 
-    private Rigidbody2D body;
-    private Facer facer;
-    private Grounder grounder;
-    private Jumper jumper;
-    private Runner runner;
-    private HealthManager healthManager;
-    private SquashStretchManager squashStretchManager;
+    protected Rigidbody2D Body;
+    protected Facer Facer;
+    protected Grounder Grounder;
+    protected Jumper Jumper;
+    protected Runner Runner;
 
     #endregion
 
     #region Tracked Values
 
     private float coyoteTimer;
-    private Vector2 inputVector;
+    protected Vector2 InputVector;
 
     #endregion
     
     #region Unity Functions
 
-    private void Awake() {
+    protected virtual void Awake() {
         GetComponents();
         AssignPlayer();
         InitializeTrackedValues();
         SubscribeEvents();
     }
 
-    private void Update() {
+    protected virtual void Update() {
         HandleCoyoteTime();
-        facer.CheckFlip();
         CheckGrounded();
         UpdateTrackedValues();
-    }
-
-    private void OnEnable() {
-        EnableAllInputs();
-    }
-
-    private void OnDisable() {
-        DisableAllInputs();
     }
 
     #endregion
@@ -77,7 +66,7 @@ public class Player : MonoBehaviour, ISpawnable {
     /// <summary>
     ///     Enable all player inputs.
     /// </summary>
-    public void EnableAllInputs() {
+    public virtual void EnableAllInputs() {
         EnableBaseInputs();
     }
 
@@ -86,7 +75,6 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void EnableBaseInputs() {
         InputHandler.Jump.InputAction.performed += OnJumpStart;
-        InputHandler.Jump.InputAction.canceled += OnJumpStop;
         InputHandler.Move.performed += OnMoveStart;
         InputHandler.Move.canceled += OnMoveStop;
     }
@@ -94,7 +82,7 @@ public class Player : MonoBehaviour, ISpawnable {
     /// <summary>
     ///     Disable all player inputs.
     /// </summary>
-    public void DisableAllInputs() {
+    public virtual void DisableAllInputs() {
         DisableBaseInputs();
     }
 
@@ -103,7 +91,6 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void DisableBaseInputs() {
         InputHandler.Jump.InputAction.performed -= OnJumpStart;
-        InputHandler.Jump.InputAction.canceled -= OnJumpStop;
         InputHandler.Move.performed -= OnMoveStart;
         InputHandler.Move.canceled -= OnMoveStop;
     }
@@ -112,14 +99,12 @@ public class Player : MonoBehaviour, ISpawnable {
     ///     Get all components on the player.
     /// </summary>
     private void GetComponents() {
-        body = GetComponent<Rigidbody2D>();
-        facer = GetComponent<Facer>();
-        grounder = GetComponent<Grounder>();
-        jumper = GetComponent<Jumper>();
-        runner = GetComponent<Runner>();
+        Body = GetComponent<Rigidbody2D>();
+        Facer = GetComponent<Facer>();
+        Grounder = GetComponent<Grounder>();
+        Jumper = GetComponent<Jumper>();
+        Runner = GetComponent<Runner>();
         InputHandler = GetComponent<PlayerInputHandler>();
-        healthManager = GetComponent<HealthManager>();
-        squashStretchManager = GetComponent<SquashStretchManager>();
     }
 
     /// <summary>
@@ -133,10 +118,9 @@ public class Player : MonoBehaviour, ISpawnable {
     ///     Perform a jump.
     /// </summary>
     public void Jump() {
-        if (grounder.IsGrounded() || coyoteTimer <= coyoteTime) {
+        if (Grounder.IsGrounded() || coyoteTimer <= coyoteTime) {
             coyoteTimer = coyoteTime + 1;
-            jumper.Jump();
-            squashStretchManager.Stretch = true;
+            Jumper.Jump();
         }
     }
 
@@ -145,30 +129,36 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void OnLand() {
         if (InputHandler.IsEnabled && InputHandler.Jump.IsBuffered()) Jump();
-        squashStretchManager.Squash = true;
-        grounder.ForceGround();
+        Grounder.ForceGround();
     }
 
     /// <summary>
     ///     Stop all movement of the player.
     /// </summary>
     public void StopMovement() {
-        jumper.CancelJump();
-        runner.StopRun();
+        Jumper.CancelJump();
+        Runner.StopRun();
     }
 
     /// <summary>
     ///     Handle the player's coyote time.
     /// </summary>
     private void HandleCoyoteTime() {
-        jumper.StopGravity = coyoteTimer <= coyoteTime;
+        Jumper.StopGravity = coyoteTimer <= coyoteTime;
     }
 
     /// <summary>
     ///     Subscribe to events managed within the script.
     /// </summary>
     private void SubscribeEvents() {
-        jumper.Landed += OnLand;
+        Jumper.Landed += OnLand;
+        deathManager.Died += OnDeath;
+    }
+
+    private void OnDeath() {
+        StartCoroutine(GameManager.Instance.LoadSaveSpot(SceneManager.GetActiveScene().name,
+            SceneSwitcher.CurrentOuterScene));
+        healthManager.FullHeal();
     }
 
     /// <summary>
@@ -201,20 +191,13 @@ public class Player : MonoBehaviour, ISpawnable {
     }
 
     /// <summary>
-    ///     Callback for when the player ends a jump.
-    /// </summary>
-    /// <param name="context">The input action callback context.</param>
-    private void OnJumpStop(InputAction.CallbackContext context) {
-        jumper.CancelJump();
-    }
-
-    /// <summary>
     ///     Callback for when the player starts moving.
     /// </summary>
     /// <param name="context">The input action callback context.</param>
     private void OnMoveStart(InputAction.CallbackContext context) {
-        inputVector = context.ReadValue<Vector2>();
-        runner.Run(inputVector.x);
+        InputVector = context.ReadValue<Vector2>();
+        Runner.Run(InputVector.x);
+        Facer.CheckFlip();
     }
 
     /// <summary>
@@ -222,7 +205,7 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     /// <param name="context">The input action callback context.</param>
     private void OnMoveStop(InputAction.CallbackContext context) {
-        runner.StopRun();
+        Runner.StopRun();
     }
 
     /// <summary>
@@ -237,14 +220,12 @@ public class Player : MonoBehaviour, ISpawnable {
     ///     Check whether the player is grounded, accounting for coyote time.
     /// </summary>
     private void CheckGrounded() {
-        if (body.velocity.y <= 0 && grounder.WasGrounded && !grounder.IsGrounded()) {
+        if (Body.velocity.y <= 0 && Grounder.WasGrounded && !Grounder.IsGrounded()) {
             coyoteTimer = 0;
-            jumper.StopGravity = true;
+            Jumper.StopGravity = true;
         }
 
-        if (InputHandler.IsEnabled && !InputHandler.Jump.InputAction.IsPressed()) jumper.CancelJump();
-
-        if (grounder.IsGrounded() && Mathf.Abs(body.velocity.x) > 0) {
+        if (Grounder.IsGrounded() && Mathf.Abs(Body.velocity.x) > 0) {
             if (!runParticles.isEmitting) runParticles.Play();
         } else {
             if (runParticles.isEmitting) runParticles.Stop();

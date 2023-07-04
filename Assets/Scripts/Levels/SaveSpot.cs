@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +8,8 @@ using UnityEngine;
 public class SaveSpot : MonoBehaviour, IDataPersistence {
     private bool playerInTrigger;
 
+    [NonSerialized] public SceneType SceneType;
+    
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Player")) {
             playerInTrigger = true;
@@ -23,7 +26,17 @@ public class SaveSpot : MonoBehaviour, IDataPersistence {
 
     /// <inheritdoc />
     public void SaveData(SaveData saveData) {
-        if (playerInTrigger) saveData.saveScene = gameObject.scene.name;
+        if (playerInTrigger) {
+            switch (SceneType) {
+                case SceneType.Inner:
+                    saveData.saveInnerScene = gameObject.scene.name;
+                    break;
+                case SceneType.Outer:
+                    saveData.saveOuterScene = gameObject.scene.name;
+                    break;
+            }
+            
+        }
     }
 
     /// <summary>

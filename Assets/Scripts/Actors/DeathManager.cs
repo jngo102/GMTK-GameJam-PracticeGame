@@ -45,15 +45,13 @@ public class DeathManager : MonoBehaviour {
     /// <summary>
     ///     Called when the actor dies.
     /// </summary>
-    /// <param name="damageSource">The source of the damager that killed the actor.</param>
+    /// <param name="damageSource">The source of the damage that killed the actor.</param>
     private void Die(Damager damageSource) {
         IsDead = true;
         if (corpsePrefab != null) {
             var corpse = Instantiate(corpsePrefab, transform.position, Quaternion.identity);
             corpse.GetComponent<Facer>().FaceObject(damageSource.transform);
         }
-
-        Destroy(gameObject);
     }
 
     /// <summary>

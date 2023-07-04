@@ -5,3 +5,8 @@ public enum SceneTransitionType {
     MainMenu,
     Level
 }
+
+public enum SceneType {
+    Inner,
+    Outer
+}

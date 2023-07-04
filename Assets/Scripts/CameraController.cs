@@ -35,6 +35,10 @@ public class CameraController : MonoBehaviour {
     public void AddTarget(Transform target) {
         targets.Add(target);
     }
+
+    public void ClearTargets() {
+        targets.Clear();
+    }
     
     /// <summary>
     ///     Remove a target from the camera controller's list of targets to follow.

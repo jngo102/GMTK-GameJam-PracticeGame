@@ -34,7 +34,9 @@ public class MainMenu : MonoBehaviour, IDataPersistence {
     /// <summary>
     ///     The last scene that the player saved at.
     /// </summary>
-    private string lastSaveScene;
+    private string lastSaveInnerScene;
+    
+    private string lastSaveOuterScene;
 
     private void Start() {
         if (Application.platform == RuntimePlatform.WebGLPlayer) quitButton.gameObject.SetActive(false);
@@ -49,7 +51,8 @@ public class MainMenu : MonoBehaviour, IDataPersistence {
 
     /// <inheritdoc />
     public void LoadData(SaveData saveData) {
-        lastSaveScene = saveData.saveScene;
+        lastSaveInnerScene = saveData.saveInnerScene;
+        lastSaveOuterScene = saveData.saveOuterScene;
     }
 
     /// <inheritdoc />
@@ -90,6 +93,6 @@ public class MainMenu : MonoBehaviour, IDataPersistence {
     ///     Load the last scene that the player saved in.
     /// </summary>
     public void LoadLastSaveSpot() {
-        GameManager.Instance.LoadSaveSpot(lastSaveScene);
+        GameManager.Instance.StartCoroutine(GameManager.Instance.LoadSaveSpot(lastSaveInnerScene, lastSaveOuterScene));
     }
 }
