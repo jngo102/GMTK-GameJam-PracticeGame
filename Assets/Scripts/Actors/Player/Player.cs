@@ -59,6 +59,16 @@ public class Player : MonoBehaviour, ISpawnable {
         HandleCoyoteTime();
         CheckGrounded();
         UpdateTrackedValues();
+
+        InputVector = InputHandler.Move.ReadValue<Vector2>();
+        if(InputVector.magnitude > 0){
+          Runner.Run(InputVector.x);
+          Facer.CheckFlip();
+        }
+        else{
+          Runner.StopRun();
+        }
+
     }
 
     #endregion
@@ -75,8 +85,8 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void EnableBaseInputs() {
         InputHandler.Jump.InputAction.performed += OnJumpStart;
-        InputHandler.Move.performed += OnMoveStart;
-        InputHandler.Move.canceled += OnMoveStop;
+        //InputHandler.Move.performed += OnMoveStart;
+        //InputHandler.Move.canceled += OnMoveStop;
     }
 
     /// <summary>
@@ -91,8 +101,8 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void DisableBaseInputs() {
         InputHandler.Jump.InputAction.performed -= OnJumpStart;
-        InputHandler.Move.performed -= OnMoveStart;
-        InputHandler.Move.canceled -= OnMoveStop;
+        //InputHandler.Move.performed -= OnMoveStart;
+        //InputHandler.Move.canceled -= OnMoveStop;
     }
 
     /// <summary>
@@ -190,11 +200,11 @@ public class Player : MonoBehaviour, ISpawnable {
         Jump();
     }
 
-    /// <summary>
-    ///     Callback for when the player starts moving.
-    /// </summary>
-    /// <param name="context">The input action callback context.</param>
-    private void OnMoveStart(InputAction.CallbackContext context) {
+  /// <summary>
+  ///     Callback for when the player starts moving.
+  /// </summary>
+  /// <param name="context">The input action callback context.</param>
+  private void OnMoveStart(InputAction.CallbackContext context) {
         InputVector = context.ReadValue<Vector2>();
         Runner.Run(InputVector.x);
         Facer.CheckFlip();
