@@ -7,7 +7,7 @@ public class OuterPlayer : Player {
     [SerializeField] private float sprintSpeed = 8;
 
     private Glider glider;
-    
+
     protected override void Awake() {
         base.Awake();
 
@@ -18,19 +18,16 @@ public class OuterPlayer : Player {
         base.Update();
 
         InputVector = InputHandler.Move.ReadValue<Vector2>();
-        if (InputVector.magnitude > 0)
-        {
-          Runner.Run(InputVector.x);
-          Facer.CheckFlip();
+        if (InputVector.magnitude > 0) {
+            Runner.Run(InputVector.x);
+            Facer.CheckFlip();
         }
-        else
-        {
-          Runner.StopRun();
+        else {
+            Runner.StopRun();
         }
 
-        if (Body.velocity.y <= 0 && InputHandler.Jump.InputAction.IsPressed() && !glider.IsGliding) {
+        if (Body.velocity.y <= 0 && InputHandler.Jump.InputAction.IsPressed() && !glider.IsGliding)
             glider.StartGliding();
-        }
     }
 
     private void OnEnable() {
@@ -40,7 +37,7 @@ public class OuterPlayer : Player {
     private void OnDisable() {
         DisableAllInputs();
     }
-    
+
     public override void EnableAllInputs() {
         base.EnableAllInputs();
 
@@ -48,7 +45,7 @@ public class OuterPlayer : Player {
         InputHandler.Sprint.performed += OnSprintStart;
         InputHandler.Sprint.canceled += OnSprintStop;
     }
-    
+
     public override void DisableAllInputs() {
         base.DisableAllInputs();
 
@@ -56,7 +53,7 @@ public class OuterPlayer : Player {
         InputHandler.Sprint.performed -= OnSprintStart;
         InputHandler.Sprint.canceled -= OnSprintStop;
     }
-    
+
     private void OnJumpStop(InputAction.CallbackContext context) {
         if (!glider.IsGliding) return;
         glider.StopGliding();

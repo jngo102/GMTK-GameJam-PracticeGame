@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RectTransform))]
 public class Vignette : BaseUI {
     private RectTransform rectTransform;
-    
+
     private void Awake() {
         rectTransform = GetComponent<RectTransform>();
     }

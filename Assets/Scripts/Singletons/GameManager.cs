@@ -9,20 +9,18 @@ using UnityEngine.SceneManagement;
 /// </summary>
 [RequireComponent(typeof(PlayerInputManager))]
 public class GameManager : Singleton<GameManager> {
+    public delegate void OnLevelStart();
+
     /// <summary>
     ///     The player prefab.
     /// </summary>
     [SerializeField] private InnerPlayer innerPlayerPrefab;
 
     [SerializeField] private OuterPlayer outerPlayerPrefab;
-    
-    public InnerPlayer InnerPlayer => innerPlayer;
-    public OuterPlayer OuterPlayer => outerPlayer;
 
-    private InnerPlayer innerPlayer;
-    private OuterPlayer outerPlayer;
+    public InnerPlayer InnerPlayer { get; private set; }
 
-    public delegate void OnLevelStart();
+    public OuterPlayer OuterPlayer { get; private set; }
 
     public event OnLevelStart LevelStarted;
 
@@ -31,10 +29,10 @@ public class GameManager : Singleton<GameManager> {
     }
 
     private void CreatePlayers() {
-        innerPlayer = Instantiate(innerPlayerPrefab);
-        outerPlayer = Instantiate(outerPlayerPrefab);
-        innerPlayer.gameObject.SetActive(false);
-        outerPlayer.gameObject.SetActive(false);
+        InnerPlayer = Instantiate(innerPlayerPrefab);
+        OuterPlayer = Instantiate(outerPlayerPrefab);
+        InnerPlayer.gameObject.SetActive(false);
+        OuterPlayer.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -61,9 +59,7 @@ public class GameManager : Singleton<GameManager> {
         SaveDataManager.Instance.SaveGame();
         var loadOperation = SceneManager.LoadSceneAsync(sceneName,
             sceneType == SceneType.Inner ? LoadSceneMode.Single : LoadSceneMode.Additive);
-        while (!loadOperation.isDone) {
-            yield return null;
-        }
+        while (!loadOperation.isDone) yield return null;
         SaveDataManager.Instance.LoadGame();
         switch (sceneType) {
             case SceneType.Inner:
@@ -91,7 +87,7 @@ public class GameManager : Singleton<GameManager> {
 
                 break;
         }
-        
+
         SwitchPlayer(sceneType);
         LevelStarted?.Invoke();
 
@@ -102,14 +98,14 @@ public class GameManager : Singleton<GameManager> {
         var cameraController = FindObjectOfType<CameraController>();
         switch (playerType) {
             case SceneType.Inner:
-                innerPlayer.gameObject.SetActive(true);
-                cameraController.Target = innerPlayer.transform;
-                outerPlayer.gameObject.SetActive(false);
+                InnerPlayer.gameObject.SetActive(true);
+                cameraController.Target = InnerPlayer.transform;
+                OuterPlayer.gameObject.SetActive(false);
                 break;
             case SceneType.Outer:
-                outerPlayer.gameObject.SetActive(true);
-                cameraController.Target = outerPlayer.transform;
-                innerPlayer.gameObject.SetActive(false);
+                OuterPlayer.gameObject.SetActive(true);
+                cameraController.Target = OuterPlayer.transform;
+                InnerPlayer.gameObject.SetActive(false);
                 break;
         }
     }
@@ -172,13 +168,13 @@ public class GameManager : Singleton<GameManager> {
         var triggerWidth = triggerCollider.bounds.size.x;
         var targetX = triggerPosition.x + triggerWidth * triggerScale.x;
         triggerCollider.enabled = false;
-        innerPlayer.transform.position = triggerPosition;
-        var playerInputHandler = innerPlayer.GetComponent<PlayerInputHandler>();
+        InnerPlayer.transform.position = triggerPosition;
+        var playerInputHandler = InnerPlayer.GetComponent<PlayerInputHandler>();
         playerInputHandler.Disable();
-        var playerScale = innerPlayer.transform.localScale;
+        var playerScale = InnerPlayer.transform.localScale;
         playerScale = new Vector3(Mathf.Sign(triggerScale.x) * playerScale.x, playerScale.y, playerScale.z);
-        innerPlayer.transform.localScale = playerScale;
-        var playerRunner = innerPlayer.GetComponent<Runner>();
+        InnerPlayer.transform.localScale = playerScale;
+        var playerRunner = InnerPlayer.GetComponent<Runner>();
         playerRunner.RunTo(targetX);
 
         void RunFinishedHandler(Runner runner) {
@@ -208,13 +204,13 @@ public class GameManager : Singleton<GameManager> {
         var triggerWidth = triggerCollider.bounds.size.x;
         var targetX = triggerPosition.x + triggerWidth * triggerScale.x;
         triggerCollider.enabled = false;
-        outerPlayer.transform.position = triggerPosition;
-        var playerInputHandler = outerPlayer.GetComponent<PlayerInputHandler>();
+        OuterPlayer.transform.position = triggerPosition;
+        var playerInputHandler = OuterPlayer.GetComponent<PlayerInputHandler>();
         playerInputHandler.Disable();
-        var playerScale = outerPlayer.transform.localScale;
+        var playerScale = OuterPlayer.transform.localScale;
         playerScale = new Vector3(Mathf.Sign(triggerScale.x) * playerScale.x, playerScale.y, playerScale.z);
-        outerPlayer.transform.localScale = playerScale;
-        var playerRunner = outerPlayer.GetComponent<Runner>();
+        OuterPlayer.transform.localScale = playerScale;
+        var playerRunner = OuterPlayer.GetComponent<Runner>();
         playerRunner.RunTo(targetX);
 
         void RunFinishedHandler(Runner runner) {
@@ -239,7 +235,7 @@ public class GameManager : Singleton<GameManager> {
         }
 
         saveSpot.SceneType = SceneType.Inner;
-        innerPlayer.transform.position = saveSpot.transform.position;
+        InnerPlayer.transform.position = saveSpot.transform.position;
     }
 
     private void StartOuterLevel() {
@@ -251,6 +247,6 @@ public class GameManager : Singleton<GameManager> {
         }
 
         saveSpot.SceneType = SceneType.Outer;
-        outerPlayer.transform.position = saveSpot.transform.position;
+        OuterPlayer.transform.position = saveSpot.transform.position;
     }
 }

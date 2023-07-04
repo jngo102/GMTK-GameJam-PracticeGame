@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Facer))]
@@ -7,11 +6,11 @@ public class Flyer : MonoBehaviour {
     [SerializeField] private float flyToSpeed = 5;
     [SerializeField] private float idleFlySpeed = 2;
     [SerializeField] private float idleFlyRandomness = 1;
-    
+
     private Rigidbody2D body;
-    private Facer facer;
 
     private float currentFlySpeed;
+    private Facer facer;
     private Vector3 flyTarget;
     private float idleFlyTimer;
 
@@ -30,9 +29,7 @@ public class Flyer : MonoBehaviour {
         var distance = (flyTarget - selfPosition).normalized;
         facer.FaceDirection(distance.x);
         body.velocity = distance * currentFlySpeed;
-        if ((selfPosition - flyTarget).magnitude < 0.1f) {
-            IdleFly();
-        }
+        if ((selfPosition - flyTarget).magnitude < 0.1f) IdleFly();
     }
 
     public void IdleFly() {
@@ -40,8 +37,8 @@ public class Flyer : MonoBehaviour {
         var selfTransform = transform;
         var selfPosition = selfTransform.position;
         flyTarget = new Vector3(
-            selfPosition.x + UnityEngine.Random.Range(-idleFlyRandomness, idleFlyRandomness),
-            selfPosition.y + UnityEngine.Random.Range(-idleFlyRandomness, idleFlyRandomness),
+            selfPosition.x + Random.Range(-idleFlyRandomness, idleFlyRandomness),
+            selfPosition.y + Random.Range(-idleFlyRandomness, idleFlyRandomness),
             selfPosition.z
         );
     }

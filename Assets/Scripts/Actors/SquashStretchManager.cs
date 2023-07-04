@@ -10,26 +10,22 @@ public class SquashStretchManager : MonoBehaviour {
     private readonly int stretchParameter = Animator.StringToHash("Stretching");
 
     /// <summary>
-    /// Whether to squash the game object.
+    ///     Whether to squash the game object.
     /// </summary>
     public bool Squash {
         set {
             squashStretchAnimator.SetBool(squashParameter, value);
-            if (value) {
-                squashStretchAnimator.Play("Squash");
-            }
+            if (value) squashStretchAnimator.Play("Squash");
         }
     }
-    
+
     /// <summary>
     ///     Whether to stretch the game object.
     /// </summary>
     public bool Stretch {
         set {
             squashStretchAnimator.SetBool(stretchParameter, value);
-            if (value) {
-                squashStretchAnimator.Play("Stretch");
-            }
+            if (value) squashStretchAnimator.Play("Stretch");
         }
     }
 
@@ -39,7 +35,7 @@ public class SquashStretchManager : MonoBehaviour {
     public void ResetSquashParameter() {
         squashStretchAnimator.SetBool(squashParameter, false);
     }
-    
+
     /// <summary>
     ///     Reset the animator parameter that controls stretching.
     /// </summary>

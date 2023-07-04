@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,20 +13,20 @@ public class PlayerInputHandler : MonoBehaviour {
 
     public BufferedInputAction AttackLeft;
     public BufferedInputAction AttackRight;
-    
+
+    private PlayerInputActions inputActions;
+
     /// <summary>
     ///     The buffered input action for jumping.
     /// </summary>
     public BufferedInputAction Jump;
-    
+
     /// <summary>
     ///     The input action for moving.
     /// </summary>
     [NonSerialized] public InputAction Move;
-    
-    [NonSerialized] public InputAction Sprint;
 
-    private PlayerInputActions inputActions;
+    [NonSerialized] public InputAction Sprint;
 
     /// <summary>
     ///     Whether the input manager is enabled.
@@ -56,7 +55,7 @@ public class PlayerInputHandler : MonoBehaviour {
 
         AttackLeft = new BufferedInputAction(inputActions.Player.AttackLeft, inputBufferTime);
         AttackRight = new BufferedInputAction(inputActions.Player.AttackRight, inputBufferTime);
-        
+
         Jump = new BufferedInputAction(inputActions.Player.Jump, inputBufferTime);
 
         Move = inputActions.Player.Move;

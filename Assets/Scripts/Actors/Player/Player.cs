@@ -11,58 +11,25 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Runner))]
 public class Player : MonoBehaviour, ISpawnable {
-    #region Exposed Values
-
-    /// <summary>
-    ///     The duration before the player actually falls and cannot perform a jump.
-    /// </summary>
-    [SerializeField] private float coyoteTime = 0.1f;
-
-    [SerializeField] private ParticleSystem runParticles;
-    [SerializeField] private DeathManager deathManager;
-    [SerializeField] private HealthManager healthManager;
+    private bool canDoubleJump = true;
     
-    #endregion
-
     /// <summary>
     ///     The input manager for this specific player instance.
     /// </summary>
     public PlayerInputHandler InputHandler { get; private set; }
-    
-    #region Components
 
-    protected Rigidbody2D Body;
-    protected Facer Facer;
-    protected Grounder Grounder;
-    protected Jumper Jumper;
-    protected Runner Runner;
+    /// <inheritdoc />
+    public void OnCreate() { }
 
-    #endregion
+    /// <inheritdoc />
+    public void OnSpawn() { }
 
-    #region Tracked Values
+    /// <inheritdoc />
+    public void OnDespawn() { }
 
-    private float coyoteTimer;
-    protected Vector2 InputVector;
+    /// <inheritdoc />
+    public void OnDelete() { }
 
-    #endregion
-    
-    #region Unity Functions
-
-    protected virtual void Awake() {
-        GetComponents();
-        AssignPlayer();
-        InitializeTrackedValues();
-        SubscribeEvents();
-    }
-
-    protected virtual void Update() {
-        HandleCoyoteTime();
-        CheckGrounded();
-        UpdateTrackedValues();
-    }
-
-    #endregion
-    
     /// <summary>
     ///     Enable all player inputs.
     /// </summary>
@@ -121,7 +88,14 @@ public class Player : MonoBehaviour, ISpawnable {
         if (Grounder.IsGrounded() || coyoteTimer <= coyoteTime) {
             coyoteTimer = coyoteTime + 1;
             Jumper.Jump();
+        } else if (canDoubleJump) {
+            DoubleJump();
         }
+    }
+
+    public void DoubleJump() {
+        canDoubleJump = false;
+        Jumper.Jump();
     }
 
     /// <summary>
@@ -130,6 +104,7 @@ public class Player : MonoBehaviour, ISpawnable {
     private void OnLand() {
         if (InputHandler.IsEnabled && InputHandler.Jump.IsBuffered()) Jump();
         Grounder.ForceGround();
+        canDoubleJump = true;
     }
 
     /// <summary>
@@ -168,20 +143,6 @@ public class Player : MonoBehaviour, ISpawnable {
         coyoteTimer = Mathf.Clamp(coyoteTimer + Time.deltaTime, 0, coyoteTime + 1);
     }
 
-    /// <inheritdoc />
-    public void OnCreate() { }
-
-    /// <inheritdoc />
-    public void OnSpawn() {
-        
-    }
-
-    /// <inheritdoc />
-    public void OnDespawn() { }
-
-    /// <inheritdoc />
-    public void OnDelete() { }
-
     /// <summary>
     ///     Callback for when the player starts a jump.
     /// </summary>
@@ -190,11 +151,11 @@ public class Player : MonoBehaviour, ISpawnable {
         Jump();
     }
 
-  /// <summary>
-  ///     Callback for when the player starts moving.
-  /// </summary>
-  /// <param name="context">The input action callback context.</param>
-  private void OnMoveStart(InputAction.CallbackContext context) {
+    /// <summary>
+    ///     Callback for when the player starts moving.
+    /// </summary>
+    /// <param name="context">The input action callback context.</param>
+    private void OnMoveStart(InputAction.CallbackContext context) {
         InputVector = context.ReadValue<Vector2>();
         Runner.Run(InputVector.x);
         Facer.CheckFlip();
@@ -227,8 +188,56 @@ public class Player : MonoBehaviour, ISpawnable {
 
         if (Grounder.IsGrounded() && Mathf.Abs(Body.velocity.x) > 0) {
             if (!runParticles.isEmitting) runParticles.Play();
-        } else {
+        }
+        else {
             if (runParticles.isEmitting) runParticles.Stop();
         }
     }
+
+    #region Exposed Values
+
+    /// <summary>
+    ///     The duration before the player actually falls and cannot perform a jump.
+    /// </summary>
+    [SerializeField] private float coyoteTime = 0.1f;
+
+    [SerializeField] private ParticleSystem runParticles;
+    [SerializeField] private DeathManager deathManager;
+    [SerializeField] private HealthManager healthManager;
+
+    #endregion
+
+    #region Components
+
+    protected Rigidbody2D Body;
+    protected Facer Facer;
+    protected Grounder Grounder;
+    protected Jumper Jumper;
+    protected Runner Runner;
+
+    #endregion
+
+    #region Tracked Values
+
+    private float coyoteTimer;
+    protected Vector2 InputVector;
+
+    #endregion
+
+    #region Unity Functions
+
+    protected virtual void Awake() {
+        GetComponents();
+        AssignPlayer();
+        InitializeTrackedValues();
+        SubscribeEvents();
+    }
+
+    protected virtual void Update() {
+        HandleCoyoteTime();
+        CheckGrounded();
+        UpdateTrackedValues();
+    }
+
+    #endregion
 }

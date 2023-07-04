@@ -14,7 +14,7 @@ public class SaveData {
     ///     The player's maximum health.
     /// </summary>
     public float maxHealth;
-    
+
     /// <summary>
     ///     Input binding overrides that the player has made.
     /// </summary>
@@ -29,7 +29,7 @@ public class SaveData {
     ///     The scene of the save spot that the player last saved at.
     /// </summary>
     public string saveInnerScene;
-    
+
     public string saveOuterScene;
 
     public SaveData() {

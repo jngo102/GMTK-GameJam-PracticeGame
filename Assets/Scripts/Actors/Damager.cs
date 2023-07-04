@@ -14,19 +14,11 @@ public class Damager : MonoBehaviour, ISpawnable {
         if (other.TryGetComponent<HealthManager>(out var healthManager)) healthManager.Hurt(damageAmount, this);
     }
 
-    public void OnCreate() {
-        
-    }
+    public void OnCreate() { }
 
-    public void OnSpawn() {
-        
-    }
+    public void OnSpawn() { }
 
-    public void OnDespawn() {
-        
-    }
+    public void OnDespawn() { }
 
-    public void OnDelete() {
-        
-    }
+    public void OnDelete() { }
 }

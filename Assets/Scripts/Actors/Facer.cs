@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 /// <summary>
@@ -8,20 +7,20 @@ using UnityEngine;
 public class Facer : MonoBehaviour {
     public delegate void OnFlip();
 
-    public event OnFlip Flipped;
-    
     private Rigidbody2D body;
 
     private void Awake() {
         body = GetComponent<Rigidbody2D>();
     }
 
+    public event OnFlip Flipped;
+
     public void FaceDirection(float direction) {
         if ((direction > 0 && transform.localScale.x < 0) ||
             (direction < 0 && transform.localScale.x > 0))
             Flip();
     }
-    
+
     /// <summary>
     ///     Face a target object.
     /// </summary>
@@ -37,9 +36,8 @@ public class Facer : MonoBehaviour {
     /// </summary>
     public void CheckFlip() {
         if ((body.velocity.x > 0 && transform.localScale.x < 0) ||
-            (body.velocity.x < 0 && transform.localScale.x > 0)) {
+            (body.velocity.x < 0 && transform.localScale.x > 0))
             Flip();
-        }
     }
 
     /// <summary>
