@@ -17,6 +17,17 @@ public class OuterPlayer : Player {
     protected override void Update() {
         base.Update();
 
+        InputVector = InputHandler.Move.ReadValue<Vector2>();
+        if (InputVector.magnitude > 0)
+        {
+          Runner.Run(InputVector.x);
+          Facer.CheckFlip();
+        }
+        else
+        {
+          Runner.StopRun();
+        }
+
         if (Body.velocity.y <= 0 && InputHandler.Jump.InputAction.IsPressed() && !glider.IsGliding) {
             glider.StartGliding();
         }

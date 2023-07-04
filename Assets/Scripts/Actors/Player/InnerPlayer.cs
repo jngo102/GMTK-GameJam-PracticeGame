@@ -14,7 +14,10 @@ public class InnerPlayer : Player {
 
     protected override void Update() {
         base.Update();
-        
+
+        Runner.SmoothRun(InputHandler.Move.ReadValue<Vector2>().x);
+        //Facer.CheckFlip();
+
         if (InputHandler.AttackLeft.IsBuffered()) {
             Facer.FaceDirection(-1);
             weapon.Attack();

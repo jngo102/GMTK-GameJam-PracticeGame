@@ -77,9 +77,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29263a75c0d84854582fd962e01b730f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackAttributes: {fileID: 0}
+  cooldown: 0.2
   firePoint: {fileID: 5461417881743263381}
-  bulletSpeed: 10
+  bulletSpeed: 20
 --- !u!114 &5400291826770144441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,4 +92,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0af3a39e3e147043bd3b99e97ad6273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 1473142766578464588, guid: 8b4c8942745c1b240b1c078f1e4279dc, type: 3}

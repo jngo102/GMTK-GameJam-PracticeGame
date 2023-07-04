@@ -14,6 +14,10 @@ public class Runner : MonoBehaviour {
     /// </summary>
     public float RunSpeed = 5;
 
+    [SerializeField] float acceleration;
+    [SerializeField] float deceleration;
+    [SerializeField] float velPower;
+
     private Rigidbody2D body;
     private Facer facer;
 
@@ -26,6 +30,16 @@ public class Runner : MonoBehaviour {
     ///     Raised when the actor has finished running to a horizontal position.
     /// </summary>
     public event OnAutoRunFinish AutoRunFinished;
+
+    public void SmoothRun(float direction)
+    {
+        float targetSpeed = direction * RunSpeed;
+        float speedDiff = targetSpeed - body.velocity.x;
+        float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? acceleration : deceleration;
+        float movement = Mathf.Pow(Mathf.Abs(speedDiff) * accelRate, velPower) * Mathf.Sign(speedDiff);
+
+        body.AddForce(movement * Vector2.right);
+    }
 
     /// <summary>
     ///     Perform horizontal movement.

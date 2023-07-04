@@ -59,16 +59,6 @@ public class Player : MonoBehaviour, ISpawnable {
         HandleCoyoteTime();
         CheckGrounded();
         UpdateTrackedValues();
-
-        InputVector = InputHandler.Move.ReadValue<Vector2>();
-        if(InputVector.magnitude > 0){
-          Runner.Run(InputVector.x);
-          Facer.CheckFlip();
-        }
-        else{
-          Runner.StopRun();
-        }
-
     }
 
     #endregion

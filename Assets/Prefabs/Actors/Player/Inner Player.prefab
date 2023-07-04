@@ -4870,10 +4870,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 3125557251830364340}
     m_Modifications:
     - target: {fileID: -5690382648143506219, guid: 1153d58db56a57641ba3db3da39e73e6, type: 3}
-      propertyPath: cooldown
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: -5690382648143506219, guid: 1153d58db56a57641ba3db3da39e73e6, type: 3}
       propertyPath: attackAttributes
       value: 
       objectReference: {fileID: 11400000, guid: 3481a99d21ea0434ba603cf9fb56d479, type: 2}
@@ -4921,10 +4917,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5400291826770144441, guid: 1153d58db56a57641ba3db3da39e73e6, type: 3}
-      propertyPath: bulletPrefab
-      value: 
-      objectReference: {fileID: 1473142766578464588, guid: 8b4c8942745c1b240b1c078f1e4279dc, type: 3}
     - target: {fileID: 5461417881743263381, guid: 1153d58db56a57641ba3db3da39e73e6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.751
@@ -4955,6 +4947,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 372816316783158997, guid: 0660c574bd1e0584d837ee989cf883f1, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2093335413686154242, guid: 0660c574bd1e0584d837ee989cf883f1, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -5126,9 +5122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7282dd83450dad54497f230d47d32537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fallingGravityScale: 5
-  maxJumpHeight: 2
-  risingGravityScale: 2
+  fallingGravityScale: 6
+  maxJumpHeight: 4
+  risingGravityScale: 4
 --- !u!114 &7572073317603801933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5141,7 +5137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f01fa080bef24f4f91559ddea3e3dcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RunSpeed: 5
+  RunSpeed: 11
+  acceleration: 4
+  deceleration: 12
+  velPower: 0.6
 --- !u!114 &-8796077143675543402
 MonoBehaviour:
   m_ObjectHideFlags: 0
