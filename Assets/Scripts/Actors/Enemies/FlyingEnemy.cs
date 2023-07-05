@@ -4,7 +4,9 @@ using UnityEngine;
 public class FlyingEnemy : Enemy {
     private Flyer flyer;
 
-    private void Awake() {
+    protected override void Awake() {
+        base.Awake();
+        
         flyer = GetComponent<Flyer>();
     }
 

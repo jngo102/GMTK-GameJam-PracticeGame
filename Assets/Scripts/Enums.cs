@@ -11,7 +11,7 @@ public enum SceneType {
     Outer
 }
 
-public enum DisableAbilityType {
+public enum AbilityType {
     DoubleJump,
     Glide,
     Sprint,

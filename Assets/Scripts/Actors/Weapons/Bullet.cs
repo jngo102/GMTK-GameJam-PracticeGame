@@ -10,7 +10,6 @@ public class Bullet : Damager {
     private Rigidbody2D body;
 
     private float despawnTimer;
-    private bool fired;
 
     private void Awake() {
         body = GetComponent<Rigidbody2D>();
@@ -29,7 +28,6 @@ public class Bullet : Damager {
 
     public void Fire(float direction, float speed) {
         despawnTimer = 0;
-        fired = true;
         var selfTransform = transform;
         var scale = selfTransform.localScale;
         scale = new Vector3(direction * scale.x, scale.y, scale.z);
@@ -38,7 +36,6 @@ public class Bullet : Damager {
     }
 
     private void BulletCollide() {
-        fired = false;
         BulletHit?.Invoke(this);
     }
 }

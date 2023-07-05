@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -15,6 +16,16 @@ public class GlobalManager : MonoBehaviour {
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize() {
         CreateSingletons();
+#if UNITY_EDITOR
+        GameManager.Instance.StartCoroutine(LoadMainMenu());
+#endif
+    }
+    
+    private static IEnumerator LoadMainMenu() {    
+        yield return SceneSwitcher.UnloadOuterScene();
+        var asyncOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenu");
+        while (!asyncOperation.isDone) yield return null;
+        SaveDataManager.Instance.LoadGame();
     }
 
     /// <summary>

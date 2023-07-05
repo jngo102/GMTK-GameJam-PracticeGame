@@ -43,6 +43,7 @@ public class OuterPlayer : Player {
             else {
                 InputHandler.Sprint.performed -= OnSprintStart;
                 InputHandler.Sprint.canceled -= OnSprintStop;
+                Runner.RunSpeed = runSpeed;
                 CheckDeath();
             }
         }
@@ -52,6 +53,7 @@ public class OuterPlayer : Player {
         base.Awake();
 
         glider = GetComponent<Glider>();
+        
         Jumper.Landed += OnLand;
     }
 

@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 [RequireComponent(typeof(Shaker))]
 public class CameraController : MonoBehaviour {
-    [SerializeField] private float smoothing = 0.5f;
+    public float smoothing = 0.5f;
 
     private new Camera camera;
     private Shaker shaker;

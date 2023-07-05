@@ -100,11 +100,15 @@ public class GameManager : Singleton<GameManager> {
         switch (playerType) {
             case SceneType.Inner:
                 InnerPlayer.gameObject.SetActive(true);
+                cameraController.transform.localPosition = Vector3.back * 20;
+                cameraController.smoothing = 0.1f;
                 cameraController.Target = InnerPlayer.transform;
                 OuterPlayer.gameObject.SetActive(false);
                 break;
             case SceneType.Outer:
                 OuterPlayer.gameObject.SetActive(true);
+                cameraController.transform.localPosition = Vector3.back * 10;
+                cameraController.smoothing = 0.5f;
                 cameraController.Target = OuterPlayer.transform;
                 InnerPlayer.gameObject.SetActive(false);
                 break;

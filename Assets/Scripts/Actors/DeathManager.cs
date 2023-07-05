@@ -5,7 +5,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(HealthManager))]
 public class DeathManager : MonoBehaviour {
-    public delegate void OnDeath();
+    public delegate void OnDeath(DeathManager deathManager);
 
     /// <summary>
     ///     The corpse object to create once the actor has died.
@@ -37,7 +37,7 @@ public class DeathManager : MonoBehaviour {
     /// <param name="damageSource">The source of the damage.</param>
     private void CheckDead(float damageAmount, Damager damageSource) {
         if (healthManager.CurrentHealth <= 0) {
-            Died?.Invoke();
+            Died?.Invoke(this);
             Die(damageSource);
         }
     }

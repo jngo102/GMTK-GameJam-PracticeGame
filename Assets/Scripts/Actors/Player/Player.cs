@@ -133,13 +133,6 @@ public class Player : MonoBehaviour, ISpawnable {
     /// </summary>
     private void SubscribeEvents() {
         Jumper.Landed += OnLand;
-        deathManager.Died += OnDeath;
-    }
-
-    private void OnDeath() {
-        StartCoroutine(GameManager.Instance.LoadSaveSpot(SceneManager.GetActiveScene().name,
-            SceneSwitcher.CurrentOuterScene));
-        healthManager.FullHeal();
     }
 
     /// <summary>
@@ -189,7 +182,6 @@ public class Player : MonoBehaviour, ISpawnable {
     ///     Assign the player as the camera controller's current target.
     /// </summary>
     private void AssignPlayer() {
-        FindObjectOfType<CameraController>(true).Target = transform;
         DontDestroyOnLoad(this);
     }
 
@@ -218,8 +210,6 @@ public class Player : MonoBehaviour, ISpawnable {
     [SerializeField] private float coyoteTime = 0.1f;
 
     [SerializeField] private ParticleSystem runParticles;
-    [SerializeField] private DeathManager deathManager;
-    [SerializeField] private HealthManager healthManager;
 
     #endregion
 

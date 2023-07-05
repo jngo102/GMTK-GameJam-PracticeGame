@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(HealthManager))]
 public class InnerPlayer : Player {
+    private HealthManager healthManager;
     private AttackManager weapon;
 
     /// <summary>
@@ -49,7 +51,10 @@ public class InnerPlayer : Player {
     protected override void Awake() {
         base.Awake();
 
+        healthManager = GetComponent<HealthManager>();
         weapon = GetComponentInChildren<AttackManager>();
+
+        healthManager.Harmed += OnHurt;
     }
 
     protected override void Update() {
@@ -84,4 +89,15 @@ public class InnerPlayer : Player {
     }
 
     #endregion
+    
+    private void OnHurt(float damageAmount, Damager damageSource) {
+        var organs = FindObjectsOfType<Organ>();
+        var organ = organs[Random.Range(0, organs.Length)];
+        organ.Infect();
+        
+        healthManager.FullHeal();
+        var respawnPoints = FindObjectsOfType<RespawnPoint>();
+        var respawnPoint = respawnPoints[Random.Range(0, respawnPoints.Length)];
+        transform.position = respawnPoint.transform.position;
+    }
 }

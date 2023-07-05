@@ -54,6 +54,7 @@ public class MainMenu : MonoBehaviour, IDataPersistence {
 
     /// <inheritdoc />
     public void LoadData(SaveData saveData) {
+        Debug.Log("Load main menu data");
         lastSaveInnerScene = saveData.saveInnerScene;
         lastSaveOuterScene = saveData.saveOuterScene;
     }
@@ -96,6 +97,7 @@ public class MainMenu : MonoBehaviour, IDataPersistence {
     ///     Load the last scene that the player saved in.
     /// </summary>
     public void LoadLastSaveSpot() {
+        Debug.Log($"Load last save spot: {lastSaveInnerScene}\t{lastSaveOuterScene}");
         GameManager.Instance.StartCoroutine(GameManager.Instance.LoadSaveSpot(lastSaveInnerScene, lastSaveOuterScene));
     }
 }
