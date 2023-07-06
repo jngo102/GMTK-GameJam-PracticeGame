@@ -5122,8 +5122,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7282dd83450dad54497f230d47d32537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpSound: {fileID: 0}
+  landSound: {fileID: 0}
   fallingGravityScale: 6
-  maxJumpHeight: 4
+  maxJumpHeight: 5
   risingGravityScale: 4
 --- !u!114 &7572073317603801933
 MonoBehaviour:
@@ -5155,8 +5157,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coyoteTime: 0.1
   runParticles: {fileID: 2182796204276193360}
-  deathManager: {fileID: 2709276184414016197}
-  healthManager: {fileID: 6852802004102328410}
 --- !u!114 &5757128076344365913
 MonoBehaviour:
   m_ObjectHideFlags: 0
